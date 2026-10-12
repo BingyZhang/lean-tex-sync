@@ -1,48 +1,54 @@
 ---
 name: tex-theorem-to-lean
 description: >
-  Translate theorem, lemma, proposition, and corollary environments from a LaTeX paper into Lean, with one @tex line citation on every Lean line and @pdf rectangles when a SyncTeX file exists.
-  Use when the user says "convert theorems to Lean", "tex to lean", "mark tex lines", "stamp pdf sync", or asks any coding agent (Claude, GPT, Gemini, Grok, Cursor Agent, GitHub Copilot) to follow this file.
+  Translate theorem, lemma, proposition, and corollary environments from LaTeX or from a PDF into Lean. Each Lean proof step cites the source line it implements: a TeX line when source exists, or a PDF text-line rectangle when only a PDF is given.
+  Use when the user says "convert theorems to Lean", "tex to lean", "pdf to lean", "mark tex lines", "mark pdf lines", "stamp pdf sync", or asks any coding agent (Claude, GPT, Gemini, Grok, Cursor Agent, GitHub Copilot) to follow this file.
 ---
 
-# TeX theorems to Lean
+# Theorems to Lean
 
-Work from the paper directory that contains the `.tex` sources. The comment syntax is the one in this repo's `README.md`: `@tex: path:line` or `@tex: path:start-end`, and `@pdf: path:page:left:top:width:height` written only by `scripts/write-pdf-sync.mjs`.
+Comment syntax is in this repo's `README.md`. `@pdf` numbers are page, left, top, width, height in points from the top-left of the page.
 
-## Inventory
+Write Lean under `<paper>/lean/`. One declaration per environment. Every non-empty line carries a citation of the source line that step implements. A statement line cites the statement. A proof line cites the proof sentence, not the whole theorem. Do not invent coordinates or line numbers.
 
-Search `*.tex` for `theorem`, `lemma`, `proposition`, and `corollary` environments. Skip an environment whose `\begin` line is commented out with `%`. Translate every remaining environment, including repeated labels in different files. Record the inclusive line range of the environment, from its `\begin` line through its `\end` line.
+Prove a calculation or a logical step when the source gives explicit premises and a different conclusion. `omega`, `rw`, and `exact` are enough. A step the source only names, or defers, is a field of a `structure`. Do not give that structure the type `Prop` when a field itself has type `Prop`. Do not use `sorry`, and do not add a theorem whose proof is the hypothesis restated.
 
-## Lean
+## From TeX
 
-Write the Lean under `<paper>/lean/`. One declaration per environment. Cite that environment's range on every line of its declaration, as a path relative to the Lean file.
+Search `*.tex` for `theorem`, `lemma`, `proposition`, and `corollary`. Skip an environment whose `\begin` line is commented out with `%`. Translate every remaining environment, including repeated labels. Cite with `@tex: path:line` or `@tex: path:start-end`, path relative to the Lean file.
 
 ```lean
 theorem lowerboundsCommitGoro (protocol simulator : Prop)
     (realizes : protocol → simulator)
-    (distinguishes : simulator → False) : ¬ protocol := by -- @tex: ../sections/ImpossibilityGORO.tex:32-34
-  intro assumption -- @tex: ../sections/ImpossibilityGORO.tex:32-34
-  exact distinguishes (realizes assumption) -- @tex: ../sections/ImpossibilityGORO.tex:32-34
+    (distinguishes : simulator → False) : ¬ protocol := by -- @tex: ../sections/ImpossibilityGORO.tex:33
+  intro assumption -- @tex: ../sections/ImpossibilityGORO.tex:36
+  exact distinguishes (realizes assumption) -- @tex: ../sections/ImpossibilityGORO.tex:36
 ```
 
-Prove a calculation or a logical step when the environment, or the proof that follows it in the same file, gives explicit premises and a different conclusion. `omega`, `rw`, and `exact` are enough for the arithmetic and contradiction steps. A step the paper only names, or defers to a full version, is a field of a `structure`. Do not give that structure the type `Prop` when a field itself has type `Prop`; Lean then expects the field to be a proof. Do not use `sorry`, and do not add a theorem whose proof is the hypothesis restated.
-
-Every non-empty line carries an `@tex` citation. Do not invent `@pdf` numbers.
-
-## PDF
-
-If a PDF and a sibling `.synctex.gz` are in the paper directory, stamp from the plugin repo:
+If `<name>.pdf` and `<name>.synctex.gz` sit together, stamp from the plugin repo. Do not write `@pdf` by hand in this case.
 
 ```bash
 node scripts/write-pdf-sync.mjs <paper>/<name>.pdf <paper>/lean
 ```
 
-The script resolves each `@tex` path next to the Lean file and asks SyncTeX for a box. A line in a file that was not `\input` into that PDF has no box. Leave it without `@pdf` and report it. Do not copy coordinates from another file.
+A TeX file that was not `\input` into that PDF has no box. Leave those lines without `@pdf` and report them.
+
+## From a PDF only
+
+There is no `.tex` and no `.synctex.gz`. Do not write `@tex`.
+
+Read the PDF text with positions. PyMuPDF's `page.get_text("dict")` boxes use the same top-left point space as `@pdf`. Group words on one baseline into one visual line. For each Lean line, set `@pdf` from the visual line it translates. Several visual lines become one rectangle: left and top are the minima, width and height reach the maxima. If no extracted line matches, leave the Lean line unmarked and report it.
+
+```lean
+theorem factor (ε adv : Nat) :
+    2 * (1 - ε) * adv = (2 - 2 * ε) * adv := by -- @pdf: ../main.pdf:12:134.76:220.10:345.83:8.86
+  have h := Nat.mul_sub_left_distrib 2 1 ε -- @pdf: ../main.pdf:12:134.76:231.40:345.83:8.86
+```
 
 ## Verify
 
-1. `lean <paper>/lean/*.lean` elaborates with no errors. Use the `lean` on `PATH`.
-2. `node .grok/skills/tex-theorem-to-lean/scripts/check-markers.mjs <paper> <paper>/lean` exits 0. It checks that every non-empty Lean line has `@tex`, that the path exists relative to the Lean file or the paper root, and that the cited lines lie inside the file.
-3. Re-run the checker after stamping. Report how many `@pdf` markers were written and which environments have none because SyncTeX has no tag for that source file.
+1. `lean <paper>/lean/*.lean` elaborates with no errors.
+2. `node .grok/skills/tex-theorem-to-lean/scripts/check-markers.mjs <paper> <paper>/lean` exits 0. Each non-empty line has `@tex` or `@pdf`. A `@tex` range lies inside that file. A `@pdf` file exists, the page is at least 1, and the width and height are positive.
+3. After SyncTeX stamping, run the checker again. Report how many `@pdf` markers were written and which TeX files had none.
 
-The report lists each environment, whether Lean proves it or only records it, and whether `@pdf` was stamped.
+The report lists each environment, whether Lean proves it or only records it, and which source line each proof step cites.

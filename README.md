@@ -62,7 +62,7 @@ theorem successProbability : True := by -- @tex: demo.tex:5 @pdf: demo.pdf:1:133
 
 插件只读 Lean 行里的注释，不从论文里找定理。转换步骤写在 `.grok/skills/tex-theorem-to-lean/SKILL.md`。这份说明不绑定某一个模型。把该文件和论文目录交给任何编程助手即可，例如 Claude、GPT、Gemini、Grok，或编辑器里的 Cursor Agent、GitHub Copilot。
 
-1. 把论文目录放进工作区。目录里是 `.tex`。要标 PDF 的话，还要有一起编译出来的 `名字.pdf` 和 `名字.synctex.gz`。
+1. 放进工作区的可以是带 `.tex` 的论文目录，也可以只有一份 PDF。有 TeX 又要标 PDF 时，还要有一起编译出来的 `名字.pdf` 和 `名字.synctex.gz`。
 2. 让模型按 `SKILL.md` 做，并说「把定理转成 Lean」。例如：
 
 ```text
@@ -73,8 +73,8 @@ Read .grok/skills/tex-theorem-to-lean/SKILL.md and convert the theorems in paper
 请按 .grok/skills/tex-theorem-to-lean/SKILL.md，把 papers/my-paper 里的定理转成 Lean。
 ```
 
-3. 模型会把未注释的 theorem、lemma、proposition、corollary 写成 `<论文>/lean/` 下的 Lean。每一行末尾是 `@tex: 相对路径:行号`。算式和反证会写成能通过 `lean` 的证明。论文只是点名、或者证明放在全文版里的结论，记成 `structure`，不用 `sorry`。
-4. 论文目录里有 SyncTeX 时，按说明运行：
+3. 模型会把 theorem、lemma、proposition、corollary 写成 `<论文>/lean/` 下的 Lean。证明的每一步标它对应的那一句，不把整段定理标成同一个范围。有 TeX 时用 `@tex: 相对路径:行号`。只有 PDF 时，按页面上的文字行写 `@pdf:`，不写 `@tex`。算式和反证会写成能通过 `lean` 的证明。论文只是点名、或者证明放在全文版里的结论，记成 `structure`，不用 `sorry`。
+4. 有 TeX 且目录里有 SyncTeX 时，按说明运行下面的命令，由它填写 `@pdf:`。不要在这种情况下手填坐标。只有 PDF 时跳过这一步，坐标来自上一步抽出的文字行。
 
 ```bash
 node scripts/write-pdf-sync.mjs <论文>/名字.pdf <论文>/lean
