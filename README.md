@@ -87,7 +87,9 @@ node scripts/write-pdf-sync.mjs <论文>/名字.pdf <论文>/lean
 
 ```bash
 node .grok/skills/tex-theorem-to-lean/scripts/check-markers.mjs <论文目录> <论文目录>/lean
-lean <论文目录>/lean/Theorems.lean
+# 密码学论文在 VCVio 工程里检查，不要只用裸的 lean
+cd "/Users/bingsheng/Documents/OneDrive - ICSR/Document/Grok工程/密码学证明"
+lake env lean <论文目录>/lean/Theorems.lean
 ```
 
 `examples/ACproceeding` 是本地试跑用的论文，没有放进仓库。试跑结果写在该目录的 `lean/Theorems.lean`：编进 `mainCom.pdf` 的源文件有 `@pdf:`，`GPRO.tex`、`GORO.tex`、`Appendix.tex`、`newAppendix.tex` 没有，因为 `mainCom.tex` 没有 `\input` 它们。

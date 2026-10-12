@@ -45,9 +45,20 @@ theorem factor (ε adv : Nat) :
   have h := Nat.mul_sub_left_distrib 2 1 ε -- @pdf: ../main.pdf:12:134.76:231.40:345.83:8.86
 ```
 
+## VCVio
+
+A paper is cryptographic when it states an advantage, indistinguishability, UC or GUC realization, zero-knowledge, commitment, encryption, signature, or random-oracle claim. Check those files inside `/Users/bingsheng/Documents/OneDrive - ICSR/Document/Grok工程/密码学证明` (Lean `v4.34.0`). A bare `lean` that only sees Init is not the check.
+
+Import `VCVio.OracleComp.ProbComp` and `VCVio.EvalDist.Monad.Basic`. An advantage or an abort probability is `Pr[p | experiment]` for `experiment : ProbComp _`, not a bare `Nat`. Mark a definition that uses `Pr` as `noncomputable`. A claim about a UC execution distribution also imports `VCVio.Interaction.UC.Computational`.
+
+```bash
+cd "/Users/bingsheng/Documents/OneDrive - ICSR/Document/Grok工程/密码学证明"
+lake env lean <paper>/lean/Theorems.lean
+```
+
 ## Verify
 
-1. `lean <paper>/lean/*.lean` elaborates with no errors.
+1. For a cryptographic paper, the `lake env lean` command above exits 0. For any other paper, `lean <paper>/lean/*.lean` exits 0.
 2. `node .grok/skills/tex-theorem-to-lean/scripts/check-markers.mjs <paper> <paper>/lean` exits 0. Each non-empty line has `@tex` or `@pdf`. A `@tex` range lies inside that file. A tactic line (`intro`, `exact`, `rw`, `have`, `simpa`, `omega`, and the same sort) must cite a line inside a `proof` environment; citing only the theorem statement fails. A `@pdf` file exists, the page is at least 1, and the width and height are positive.
 3. After SyncTeX stamping, run the checker again. Report how many `@pdf` markers were written and which TeX files had none.
 
