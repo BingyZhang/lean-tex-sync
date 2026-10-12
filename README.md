@@ -31,7 +31,12 @@ PDF 不另写行号。插件用 TeX 发行版里的 `synctex`，把注释里的 
 
 光标移动就会同步。设置里可以把 `leanTexSync.syncOnCursor` 关掉，只在命令 **Lean TeX: 从光标同步** 时跳转。
 
-在已经用 LaTeX Workshop 打开 TeX 和 PDF 的窗口里，点一行带 `@tex:` 的 Lean 会先把 TeX 光标放过去，再调用 LaTeX Workshop 的 SyncTeX，所以原来的 PDF 也会跳。没有 `@tex:` 或 `@pdf:` 注释的 Lean 行对不上任何位置，状态栏会写「这一行没有 @tex 或 @pdf 注释」。
+没有 `@tex:` 或 `@pdf:` 注释的行对不上任何位置，状态栏会写「这一行没有 @tex 或 @pdf 注释」。
+
+焦点留在你点的那一边。TeX 和 PDF 在旁边的栏里高亮，不会把当前文件盖住。两个开关在设置里搜 `leanTexSync`：
+
+- `highlightTex`：点 Lean 时高亮 TeX。默认开。
+- `highlightPdf`：点 Lean 或 TeX 时高亮 PDF。默认开。有 `@pdf:` 就用注释里的方框，没有才用 SyncTeX 现算。
 
 ## 交给只有 PDF 的人
 
@@ -52,3 +57,28 @@ theorem successProbability : True := by -- @tex: demo.tex:5 @pdf: demo.pdf:1:133
 对方打开 PDF 和 Lean，不需要 TeX 源文件。点 Lean 按 `@pdf:` 高亮 PDF；点 PDF 上同一横条高亮对应的 Lean 行。TeX 文件还在时，`@tex:` 照旧对 LaTeX。
 
 输出面板 **Lean TeX Sync** 会写索引结果，以及 SyncTeX 没有命中时的原因。
+
+## 和 skill 配套
+
+插件只读 Lean 行里的注释，不从论文里找定理。`.grok/skills/tex-theorem-to-lean/` 负责写这些注释。用 Grok 打开本仓库时，这个 skill 会自动出现。
+
+1. 把论文目录放进工作区。目录里是 `.tex`。要标 PDF 的话，还要有一起编译出来的 `名字.pdf` 和 `名字.synctex.gz`。
+2. 对 Grok 说「把定理转成 Lean」，或运行 `/tex-theorem-to-lean`。
+3. Skill 会把未注释的 theorem、lemma、proposition、corollary 写成 `<论文>/lean/` 下的 Lean。每一行末尾是 `@tex: 相对路径:行号`。算式和反证会写成能通过 `lean` 的证明。论文只是点名、或者证明放在全文版里的结论，记成 `structure`，不用 `sorry`。
+4. 论文目录里有 SyncTeX 时，skill 运行：
+
+```bash
+node scripts/write-pdf-sync.mjs <论文>/名字.pdf <论文>/lean
+```
+
+没有被这份 PDF `\input` 进去的 tex 文件不会有 `@pdf:`。不要手填坐标。
+5. 用装了本插件的 VS Code 或 Cursor 打开同一工作区。点 Lean 高亮 TeX 和 PDF；点 TeX 高亮 Lean 和 PDF；点 PDF 上的黄条，Lean 跳到对应行。
+
+检查行号：
+
+```bash
+node .grok/skills/tex-theorem-to-lean/scripts/check-markers.mjs <论文目录> <论文目录>/lean
+lean <论文目录>/lean/Theorems.lean
+```
+
+`examples/ACproceeding` 是本地试跑用的论文，没有放进仓库。试跑结果写在该目录的 `lean/Theorems.lean`：编进 `mainCom.pdf` 的源文件有 `@pdf:`，`GPRO.tex`、`GORO.tex`、`Appendix.tex`、`newAppendix.tex` 没有，因为 `mainCom.tex` 没有 `\input` 它们。
