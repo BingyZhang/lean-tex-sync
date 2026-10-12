@@ -2,7 +2,7 @@
 name: tex-theorem-to-lean
 description: >
   Translate theorem, lemma, proposition, and corollary environments from a LaTeX paper into Lean, with one @tex line citation on every Lean line and @pdf rectangles when a SyncTeX file exists.
-  Use when the user says "convert theorems to Lean", "tex to lean", "mark tex lines", "stamp pdf sync", or runs /tex-theorem-to-lean.
+  Use when the user says "convert theorems to Lean", "tex to lean", "mark tex lines", "stamp pdf sync", or asks any coding agent (Claude, GPT, Gemini, Grok, Cursor Agent, GitHub Copilot) to follow this file.
 ---
 
 # TeX theorems to Lean

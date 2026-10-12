@@ -58,14 +58,23 @@ theorem successProbability : True := by -- @tex: demo.tex:5 @pdf: demo.pdf:1:133
 
 输出面板 **Lean TeX Sync** 会写索引结果，以及 SyncTeX 没有命中时的原因。
 
-## 和 skill 配套
+## 和转换说明配套
 
-插件只读 Lean 行里的注释，不从论文里找定理。`.grok/skills/tex-theorem-to-lean/` 负责写这些注释。用 Grok 打开本仓库时，这个 skill 会自动出现。
+插件只读 Lean 行里的注释，不从论文里找定理。转换步骤写在 `.grok/skills/tex-theorem-to-lean/SKILL.md`。这份说明不绑定某一个模型。把该文件和论文目录交给任何编程助手即可，例如 Claude、GPT、Gemini、Grok，或编辑器里的 Cursor Agent、GitHub Copilot。
 
 1. 把论文目录放进工作区。目录里是 `.tex`。要标 PDF 的话，还要有一起编译出来的 `名字.pdf` 和 `名字.synctex.gz`。
-2. 对 Grok 说「把定理转成 Lean」，或运行 `/tex-theorem-to-lean`。
-3. Skill 会把未注释的 theorem、lemma、proposition、corollary 写成 `<论文>/lean/` 下的 Lean。每一行末尾是 `@tex: 相对路径:行号`。算式和反证会写成能通过 `lean` 的证明。论文只是点名、或者证明放在全文版里的结论，记成 `structure`，不用 `sorry`。
-4. 论文目录里有 SyncTeX 时，skill 运行：
+2. 让模型按 `SKILL.md` 做，并说「把定理转成 Lean」。例如：
+
+```text
+Read .grok/skills/tex-theorem-to-lean/SKILL.md and convert the theorems in papers/my-paper to Lean.
+```
+
+```text
+请按 .grok/skills/tex-theorem-to-lean/SKILL.md，把 papers/my-paper 里的定理转成 Lean。
+```
+
+3. 模型会把未注释的 theorem、lemma、proposition、corollary 写成 `<论文>/lean/` 下的 Lean。每一行末尾是 `@tex: 相对路径:行号`。算式和反证会写成能通过 `lean` 的证明。论文只是点名、或者证明放在全文版里的结论，记成 `structure`，不用 `sorry`。
+4. 论文目录里有 SyncTeX 时，按说明运行：
 
 ```bash
 node scripts/write-pdf-sync.mjs <论文>/名字.pdf <论文>/lean
