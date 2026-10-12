@@ -2,6 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const texMarker = /@tex:\s*(?:"([^"]+)"|(\S+?)):(\d+)(?:-(\d+))?/g;
+const tacticLine = /^\s+(intro|exact|rw|simp|simpa|omega|have|apply|calc|refine|constructor|cases|obtain|show)\b/;
+const proofRangesByFile = new Map();
 const pdfMarker =
   /@pdf:\s*(?:"([^"]+)"|(\S+?)):(\d+):([+-]?\d+(?:\.\d+)?):([+-]?\d+(?:\.\d+)?):([+-]?\d+(?:\.\d+)?):([+-]?\d+(?:\.\d+)?)/g;
 
@@ -33,6 +35,32 @@ function resolveTex(raw, leanPath, paperRoot) {
   return undefined;
 }
 
+function proofRanges(texPath) {
+  const cached = proofRangesByFile.get(texPath);
+  if (cached) {
+    return cached;
+  }
+  const ranges = [];
+  const stack = [];
+  fs.readFileSync(texPath, "utf8").split(/\r?\n/).forEach((line, index) => {
+    if (/^\s*%/.test(line)) {
+      return;
+    }
+    if (/\\begin\{proof\}/.test(line)) {
+      stack.push(index + 1);
+    }
+    if (/\\end\{proof\}/.test(line) && stack.length > 0) {
+      ranges.push([stack.pop(), index + 1]);
+    }
+  });
+  proofRangesByFile.set(texPath, ranges);
+  return ranges;
+}
+
+function overlapsProof(texPath, start, end) {
+  return proofRanges(texPath).some(([proofStart, proofEnd]) => start <= proofEnd && end >= proofStart);
+}
+
 function check(paperRoot, leanRoot) {
   let errors = 0;
   for (const leanPath of leanFiles(leanRoot)) {
@@ -61,6 +89,11 @@ function check(paperRoot, leanRoot) {
         const texLineCount = fs.readFileSync(texPath, "utf8").split(/\r?\n/).length;
         if (start < 1 || end < start || end > texLineCount) {
           console.error(`${leanPath}:${index + 1} bad range ${raw}:${start}-${end}`);
+          errors += 1;
+          continue;
+        }
+        if (tacticLine.test(line) && !overlapsProof(texPath, start, end)) {
+          console.error(`${leanPath}:${index + 1} proof step does not cite a proof environment in ${raw}:${start}-${end}`);
           errors += 1;
         }
       }

@@ -22,7 +22,7 @@ theorem lowerboundsCommitGoro (protocol simulator : Prop)
     (realizes : protocol → simulator)
     (distinguishes : simulator → False) : ¬ protocol := by -- @tex: ../sections/ImpossibilityGORO.tex:33
   intro assumption -- @tex: ../sections/ImpossibilityGORO.tex:36
-  exact distinguishes (realizes assumption) -- @tex: ../sections/ImpossibilityGORO.tex:36
+  exact distinguishes (realizes assumption) -- @tex: ../sections/ImpossibilityGORO.tex:60
 ```
 
 If `<name>.pdf` and `<name>.synctex.gz` sit together, stamp from the plugin repo. Do not write `@pdf` by hand in this case.
@@ -48,7 +48,7 @@ theorem factor (ε adv : Nat) :
 ## Verify
 
 1. `lean <paper>/lean/*.lean` elaborates with no errors.
-2. `node .grok/skills/tex-theorem-to-lean/scripts/check-markers.mjs <paper> <paper>/lean` exits 0. Each non-empty line has `@tex` or `@pdf`. A `@tex` range lies inside that file. A `@pdf` file exists, the page is at least 1, and the width and height are positive.
+2. `node .grok/skills/tex-theorem-to-lean/scripts/check-markers.mjs <paper> <paper>/lean` exits 0. Each non-empty line has `@tex` or `@pdf`. A `@tex` range lies inside that file. A tactic line (`intro`, `exact`, `rw`, `have`, `simpa`, `omega`, and the same sort) must cite a line inside a `proof` environment; citing only the theorem statement fails. A `@pdf` file exists, the page is at least 1, and the width and height are positive.
 3. After SyncTeX stamping, run the checker again. Report how many `@pdf` markers were written and which TeX files had none.
 
 The report lists each environment, whether Lean proves it or only records it, and which source line each proof step cites.
