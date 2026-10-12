@@ -1,0 +1,11 @@
+node_modules/
+out/
+*.vsix
+.DS_Store
+examples/**/*.aux
+examples/**/*.log
+examples/**/*.out
+examples/**/*.fls
+examples/**/*.fdb_latexmk
+examples/**/*.xdv
+examples/**/*.synctex(busy)

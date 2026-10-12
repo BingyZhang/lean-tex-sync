@@ -1,0 +1,14 @@
+src/**
+tsconfig.json
+**/*.map
+.gitignore
+examples/**/*.aux
+examples/**/*.log
+examples/**/*.out
+node_modules/**
+!node_modules/pdfjs-dist/build/pdf.mjs
+!node_modules/pdfjs-dist/build/pdf.mjs.map
+!node_modules/pdfjs-dist/build/pdf.worker.mjs
+!node_modules/pdfjs-dist/build/pdf.worker.mjs.map
+!node_modules/pdfjs-dist/cmaps/**
+!node_modules/pdfjs-dist/package.json

@@ -1,0 +1,98 @@
+{
+  "name": "lean-tex-sync",
+  "displayName": "Lean TeX Sync",
+  "description": "Click a Lean line to highlight the LaTeX or PDF line named in its comment, and the other way around.",
+  "version": "0.1.0",
+  "publisher": "local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:lean4",
+    "onLanguage:lean",
+    "onLanguage:latex",
+    "onLanguage:tex",
+    "onCommand:leanTexSync.openPair",
+    "onCommand:leanTexSync.openPdf",
+    "onCommand:leanTexSync.syncCursor",
+    "onCommand:leanTexSync.reindex",
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "leanTexSync.openPair",
+        "title": "Lean TeX: 左右对照打开"
+      },
+      {
+        "command": "leanTexSync.openPdf",
+        "title": "Lean TeX: 左侧打开 PDF"
+      },
+      {
+        "command": "leanTexSync.syncCursor",
+        "title": "Lean TeX: 从光标同步"
+      },
+      {
+        "command": "leanTexSync.reindex",
+        "title": "Lean TeX: 重建索引"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "leanTexSync.syncCursor",
+          "when": "resourceExtname =~ /\\.(lean|tex|ltx)$/",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Lean TeX Sync",
+      "properties": {
+        "leanTexSync.syncOnCursor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight the other side when the cursor moves."
+        },
+        "leanTexSync.synctexPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the synctex executable. Empty uses /Library/TeX/texbin/synctex when it exists, otherwise synctex on PATH."
+        },
+        "leanTexSync.stampOnBuild": {
+          "type": "boolean",
+          "default": true,
+          "description": "After a PDF build updates its SyncTeX file, write @pdf rectangles into Lean lines that already have @tex markers."
+        },
+        "leanTexSync.highlightTex": {
+          "type": "boolean",
+          "default": true,
+          "description": "点 Lean 时在旁边高亮 TeX 源文件，不把焦点从 Lean 拿走。"
+        },
+        "leanTexSync.highlightPdf": {
+          "type": "boolean",
+          "default": true,
+          "description": "点 Lean 或 TeX 时高亮 PDF。有 @pdf 注释时用注释里的方框，否则用 SyncTeX 现算。"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -w -p ./",
+    "test": "tsc -p ./ && node --test out/parse.test.js out/pdfComment.test.js out/synctex.test.js out/links.test.js out/synctex.integration.test.js scripts/write-pdf-sync.test.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.8.0"
+  },
+  "dependencies": {
+    "pdfjs-dist": "^4.10.38"
+  }
+}
