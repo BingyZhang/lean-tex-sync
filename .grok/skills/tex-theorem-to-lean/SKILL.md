@@ -49,7 +49,7 @@ theorem factor (ε adv : Nat) :
 
 A paper is cryptographic when it states an advantage, indistinguishability, UC or GUC realization, zero-knowledge, commitment, encryption, signature, or random-oracle claim. Check those files inside `/Users/bingsheng/Documents/OneDrive - ICSR/Document/Grok工程/密码学证明` (Lean `v4.34.0`). A bare `lean` that only sees Init is not the check.
 
-Import `VCVio.OracleComp.ProbComp` and `VCVio.EvalDist.Monad.Basic`. An advantage or an abort probability is `Pr[p | experiment]` for `experiment : ProbComp _`, not a bare `Nat`. Mark a definition that uses `Pr` as `noncomputable`. A claim about a UC execution distribution also imports `VCVio.Interaction.UC.Computational`.
+Import `VCVio.OracleComp.ProbComp` and `VCVio.EvalDist.Monad.Basic`. Every environment uses these types, including a claim recorded as a `structure`. An advantage, an abort probability, or a realization judgment is `Pr[p | experiment]` or a comparison of two such probabilities, for `experiment : ProbComp _`. A bare `Prop` or `Nat` skeleton is not a VCVio check. Mark a definition that uses `Pr` as `noncomputable`. When `VCVio.Interaction.UC.Computational` is already built, a UC execution claim uses `ObservedCompEmulates` instead of a hand-rolled comparison.
 
 ```bash
 cd "/Users/bingsheng/Documents/OneDrive - ICSR/Document/Grok工程/密码学证明"
