@@ -49,7 +49,9 @@ theorem factor (ε adv : Nat) :
 
 A paper is cryptographic when it states an advantage, indistinguishability, UC or GUC realization, zero-knowledge, commitment, encryption, signature, or random-oracle claim. Check those files inside `/Users/bingsheng/Documents/OneDrive - ICSR/Document/Grok工程/密码学证明` (Lean `v4.34.0`). A bare `lean` that only sees Init is not the check.
 
-Import `VCVio.OracleComp.ProbComp` and `VCVio.EvalDist.Monad.Basic`. Every environment uses these types, including a claim recorded as a `structure`. An advantage, an abort probability, or a realization judgment is `Pr[p | experiment]` or a comparison of two such probabilities, for `experiment : ProbComp _`. A bare `Prop` or `Nat` skeleton is not a VCVio check. Mark a definition that uses `Pr` as `noncomputable`. When `VCVio.Interaction.UC.Computational` is already built, a UC execution claim uses `ObservedCompEmulates` instead of a hand-rolled comparison.
+Import `VCVio.OracleComp.ProbComp` and `VCVio.EvalDist.Monad.Basic`. A UC or GUC claim imports `VCVio.Interaction.UC.Computational` and is stated as `ObservedCompUCSecure` or `ObservedCompEmulates`. Build that module first with `lake build VCVio.Interaction.UC.Computational` from the VCVio root. Distinguishing advantage is `Semantics.distAdvantage`, the total variation distance of the two closed executions.
+
+Complete the proof from those definitions. A `structure` field is not a proof. For each hybrid hop in the paper, prove `ObservedCompEmulates sem ε Hi Hj` from the `ProbComp` or `OracleComp` program that implements the hop. Chain hops with `ObservedCompEmulates.triangle`. Weaken a bound with `ObservedCompEmulates.mono`. A reduction is a function between adversaries together with `SecurityGame.secureAgainst_of_reduction` or `SecurityGame.secureAgainst_of_ucEmulation`. An impossibility is `¬ ObservedCompEmulates sem ε real ideal`, proved from a concrete plug whose `distAdvantage` exceeds `ε`. Mark a definition that uses `Pr` or `distAdvantage` as `noncomputable`.
 
 ```bash
 cd "/Users/bingsheng/Documents/OneDrive - ICSR/Document/Grok工程/密码学证明"
