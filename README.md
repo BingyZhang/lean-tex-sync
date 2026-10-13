@@ -73,7 +73,7 @@ Read .grok/skills/tex-theorem-to-lean/SKILL.md and convert the theorems in paper
 请按 .grok/skills/tex-theorem-to-lean/SKILL.md，把 papers/my-paper 里的定理转成 Lean。
 ```
 
-3. 模型会把 theorem、lemma、proposition、corollary 写成 `<论文>/lean/` 下的 Lean。证明的每一步标它对应的那一句，不把整段定理标成同一个范围。有 TeX 时用 `@tex: 相对路径:行号`。只有 PDF 时，按页面上的文字行写 `@pdf:`，不写 `@tex`。算式和反证会写成能通过 `lean` 的证明。论文只是点名、或者证明放在全文版里的结论，记成 `structure`，不用 `sorry`。
+3. 模型会把每条 theorem、lemma、proposition、corollary 和它的证明写成 `<论文>/lean/` 下的 Lean，并在 VCVio 工程里用 `lake env lean` 检查。证明的每一步标它对应的那一句。有 TeX 时用 `@tex: 相对路径:行号`。只有 PDF 时，按页面上的文字行写 `@pdf:`，不写 `@tex`。密码学结论必须是 VCVio 的 `ObservedCompEmulates`、`ObservedCompUCSecure` 或 `distAdvantage`，并且证明要从协议程序推出来。`sorry`、只返回假设、或只写一个 `structure`，都不算验证。论文把证明留在全文版、本地又没有证明文字时，必须标明未验证，不能当作完成。
 4. 有 TeX 且目录里有 SyncTeX 时，按说明运行下面的命令，由它填写 `@pdf:`。不要在这种情况下手填坐标。只有 PDF 时跳过这一步，坐标来自上一步抽出的文字行。
 
 ```bash
