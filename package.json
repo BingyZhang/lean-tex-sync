@@ -27,19 +27,19 @@
     "commands": [
       {
         "command": "leanTexSync.openPair",
-        "title": "Lean TeX: 左右对照打开"
+        "title": "Lean TeX: Open Side by Side"
       },
       {
         "command": "leanTexSync.openPdf",
-        "title": "Lean TeX: 左侧打开 PDF"
+        "title": "Lean TeX: Open PDF on the Left"
       },
       {
         "command": "leanTexSync.syncCursor",
-        "title": "Lean TeX: 从光标同步"
+        "title": "Lean TeX: Sync from Cursor"
       },
       {
         "command": "leanTexSync.reindex",
-        "title": "Lean TeX: 重建索引"
+        "title": "Lean TeX: Rebuild Index"
       }
     ],
     "menus": {
@@ -72,12 +72,12 @@
         "leanTexSync.highlightTex": {
           "type": "boolean",
           "default": true,
-          "description": "点 Lean 时在旁边高亮 TeX 源文件，不把焦点从 Lean 拿走。"
+          "description": "Highlight the TeX source next to Lean when a Lean line is clicked. Focus stays on Lean."
         },
         "leanTexSync.highlightPdf": {
           "type": "boolean",
           "default": true,
-          "description": "点 Lean 或 TeX 时高亮 PDF。有 @pdf 注释时用注释里的方框，否则用 SyncTeX 现算。"
+          "description": "Highlight the PDF when Lean or TeX is clicked. Use the box in an @pdf comment when one is present. Otherwise compute the position with SyncTeX."
         }
       }
     }

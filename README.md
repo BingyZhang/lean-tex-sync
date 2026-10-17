@@ -25,13 +25,13 @@ PDF positions are not written by hand. The extension uses the `synctex` binary f
 1. Open this directory in VS Code or Cursor.
 2. In a terminal, run `npm install`, then `npm test`.
 3. Press F5 and choose **Run Lean TeX Sync**. A new window opens on `examples/`.
-4. In that window, open `Demo.lean` and run **Lean TeX: 左右对照打开** (open side by side). The left editor is `demo.tex` and the right editor is Lean.
+4. In that window, open `Demo.lean` and run **Lean TeX: Open Side by Side**. The left editor is `demo.tex` and the right editor is Lean.
 5. Click a Lean line and the matching TeX line turns yellow. Click a TeX line and the matching Lean lines turn blue.
-6. Run **Lean TeX: 左侧打开 PDF** (open the PDF on the left). After that, clicking Lean draws a highlight on the PDF, and clicking the PDF highlights the Lean on the right.
+6. Run **Lean TeX: Open PDF on the Left**. After that, clicking Lean draws a highlight on the PDF, and clicking the PDF highlights the Lean on the right.
 
-Moving the cursor synchronizes the two sides. Set `leanTexSync.syncOnCursor` to off if the jump should happen only on **Lean TeX: 从光标同步** (sync from the cursor).
+Moving the cursor synchronizes the two sides. Set `leanTexSync.syncOnCursor` to off if the jump should happen only on **Lean TeX: Sync from Cursor**. **Lean TeX: Rebuild Index** rebuilds the marker index.
 
-A line with neither an `@tex:` nor an `@pdf:` comment matches nothing. The status bar then reads “这一行没有 @tex 或 @pdf 注释” (this line has no `@tex` or `@pdf` comment).
+A line with neither an `@tex:` nor an `@pdf:` comment matches nothing. The status bar then reads “This line has no @tex or @pdf comment.”
 
 Focus stays on the side you clicked. TeX and PDF are highlighted in the neighboring column and do not replace the current file. Both switches are under `leanTexSync` in Settings:
 

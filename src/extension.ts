@@ -205,7 +205,7 @@ async function stampPdfMarkers(pdfPath: string): Promise<void> {
   const applied = await vscode.workspace.applyEdit(edit);
   if (applied) {
     output.appendLine(`Wrote ${changed} @pdf marker${changed === 1 ? "" : "s"} from ${path.basename(pdfPath)}.`);
-    status.text = `$(check) PDF 坐标 ${changed}`;
+    status.text = `$(check) PDF coordinates ${changed}`;
     status.show();
   }
 }
@@ -401,7 +401,7 @@ async function syncFromLean(editor: vscode.TextEditor): Promise<void> {
   const link = index.linkAtLean(fileKey(editor.document.uri), editor.selection.active.line);
   clearTex();
   if (!link) {
-    status.text = "$(warning) 这一行没有 @tex 或 @pdf 注释";
+    status.text = "$(warning) This line has no @tex or @pdf comment";
     status.show();
     return;
   }
