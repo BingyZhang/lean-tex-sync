@@ -11,7 +11,17 @@ Comment syntax is in this repo's `README.md`. `@pdf` numbers are page, left, top
 
 Write Lean under `<paper>/lean/`. One declaration per environment. Every non-empty line carries a citation of the source line that step implements. A statement line cites the statement. A proof line cites the proof sentence, not the whole theorem. Do not invent coordinates or line numbers.
 
-The goal is strict verification. Every cryptographic theorem and every proof in the paper must be a Lean theorem that `lake env lean` accepts inside VCVio, with a proof term that derives the paper's conclusion. A `structure`, a `sorry`, or a proof that is the hypothesis returned unchanged is not verification. If the paper says the proof is left to a full version and the local text does not contain the argument, do not invent it and do not mark that environment verified. Report it as unverified and continue with the environments whose proofs are present.
+The goal is strict verification. Every cryptographic theorem and every proof in the paper must be a Lean theorem that `lake env lean` accepts inside VCVio, with a proof term that derives the paper's conclusion. A `structure`, a `sorry`, or a proof that is the hypothesis returned unchanged is not verification. Prove every step the local text writes: each hybrid hop, each union bound, each product of independent leak events, and each algebraic rearrangement of a displayed slack. Do not replace one of those steps by a hypothesis that the step holds. A hypothesis is allowed only for a primitive advantage the paper names and does not derive. Cite that sentence, and list the hypothesis as unverified. A skipped count, schedule, union bound, or algebraic step is not such a hypothesis. Complete it under Missing steps, in the same session, before reporting the environment. The finished bound is the chain of the proved steps. A theorem that assumes the paper's displayed slack is not finished when the local proof derives that slack.
+
+## Missing steps
+
+When a local proof names a bound but omits the derivation, finish that environment before leaving it. An ellipsis, "we count" without the list, "similar to", a product with unnamed events, or a hybrid written only as a number is an omitted derivation. Do not stop after describing the gap, and do not leave the omitted step as an assumption.
+
+1. Write `<paper>/<Name>.md` in English. Derive every missing step from the programs, figures, definitions, and displayed formulas in the paper. State index ranges, parenthesization, and excluded wires. Do not add a summand the program does not contain. Finish the note only when every lemma it uses is stated there.
+2. Encode that note as Lean theorems under `<paper>/lean/`. Cite the paper sentence the step discharges. Run both checks in Verify and repair them until both exit 0.
+3. Do not end the session while a lemma in that note has no Lean proof.
+
+If the paper says the argument exists only in a full version, and this PDF has neither the argument nor a program or figure from which it can be read, report that environment unverified and continue. That is the only stop.
 
 ## From TeX
 
